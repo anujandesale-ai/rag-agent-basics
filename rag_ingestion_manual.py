@@ -1,3 +1,4 @@
+import argparse
 import os
 import bs4
 from dotenv import load_dotenv
@@ -28,6 +29,8 @@ def create_embeddings() -> OpenAIEmbeddings:
 def load_web_documents(urls):
     print("\nStep 3: Loading documents from the web...")
     bs4_strainer = bs4.SoupStrainer(class_=("post-title", "post-header", "post-content"))
+    # Use universal tag filtering for broader website compatibility
+    # bs4_strainer = bs4.SoupStrainer(name=["p", "h1", "h2", "h3", "h4", "h5", "h6", "li", "div"])
     loader = WebBaseLoader(
         web_paths=urls,
         bs_kwargs={"parse_only": bs4_strainer},
@@ -84,16 +87,23 @@ def run_sample_query_manual(model, vector_store, query: str):
 
 
 def main():
+    parser = argparse.ArgumentParser(description="Run manual RAG ingestion and query with a runtime prompt.")
+    parser.add_argument("--query", "-q", type=str, default="What is the main idea of the agent post?",
+                        help="Question to ask the RAG system.")
+    parser.add_argument("--url", "-u", type=str, default="https://lilianweng.github.io/posts/2023-06-23-agent/",
+                        help="URL to load the document from.")
+    args = parser.parse_args()
+
     model = create_model()
     embeddings = create_embeddings()
 
-    urls = ["https://lilianweng.github.io/posts/2023-06-23-agent/"]
+    urls = [args.url]
     documents = load_web_documents(urls)
     if not documents:
         raise SystemExit("No documents loaded. Check the URL and HTML parsing rules.")
 
     vector_store = create_inmemory_vector_store(documents, embeddings)
-    run_sample_query_manual(model, vector_store, "What is the main idea of the agent post?")
+    run_sample_query_manual(model, vector_store, args.query)
 
 
 if __name__ == "__main__":
