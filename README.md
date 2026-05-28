@@ -12,10 +12,9 @@ RAG - Manual Ingestion and Query
 3. print the manual answer
 
 ## Commands to Run
-
 create .env and add OPENAI_API_KEY
 <br>
-cd /Users/anujadesale/Documents/agentic-ai/rag-agent-basics
+cd /rag-agent-basics
 <br>
 python -m venv .venv-rag-basics
 <br>
@@ -24,3 +23,11 @@ source .venv-rag-basics/bin/activate
 pip install -r requirements.txt
 <br>
 python3 rag_ingestion_manual.py
+
+# Accept the query from the command line at runtime
+
+cd <your_workspace>/rag-agent-basics
+source .venv/bin/activate
+python rag_ingestion_manual.py --query "What is the main idea of this post?"
+
+python rag_ingestion_manual.py --query "What is difference between session and cookie?" --url "https://medium.com/stackademic/token-session-cookie-jwt-oauth2-i-cant-tell-the-difference-529ee28f9055"
